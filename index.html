@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Freelancer App - İletişim & Destek</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📱 Freelancer App</h1>
+        <p>İletişim & Destek Formu</p>
+      </div>
+
+      <div class="form-container">
+        <div class="success-message" id="successMessage">
+          ✅ Mesajınız başarıyla gönderildi! En kısa sürede size dönüş
+          yapacağız.
+        </div>
+
+        <div class="error-message" id="errorMessage">
+          ❌ Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.
+        </div>
+
+        <form
+          id="contactForm"
+          action="https://formspree.io/f/xldwokgr"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="name">Ad Soyad *</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-posta *</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Konu *</label>
+            <select id="subject" name="subject" required>
+              <option value="">Konu seçin</option>
+              <option value="genel">Genel Soru</option>
+              <option value="teknik">Teknik Destek</option>
+              <option value="hata">Hata Bildirimi</option>
+              <option value="oneriler">Öneriler</option>
+              <option value="diger">Diğer</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="priority">Öncelik</label>
+            <select id="priority" name="priority">
+              <option value="normal">Normal</option>
+              <option value="yuksek">Yüksek</option>
+              <option value="acil">Acil</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Mesaj *</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Sorunuzu veya önerinizi detaylı bir şekilde yazın..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">
+            📤 Mesaj Gönder
+          </button>
+
+          <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Mesajınız gönderiliyor...</p>
+          </div>
+        </form>
+
+        <div class="contact-info">
+          <h3>📞 İletişim Bilgileri</h3>
+          <div class="contact-item">
+            <strong>E-posta:</strong> support@freelancerapp.com
+          </div>
+          <div class="contact-item">
+            <strong>Yanıt Süresi:</strong> 6-48 saat
+          </div>
+          <div class="contact-item">
+            <strong>Destek:</strong> 7/24 otomatik yanıt
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const submitBtn = document.getElementById("submitBtn");
+          const loading = document.getElementById("loading");
+          const successMessage = document.getElementById("successMessage");
+          const errorMessage = document.getElementById("errorMessage");
+
+          // Hide previous messages
+          successMessage.style.display = "none";
+          errorMessage.style.display = "none";
+
+          // Show loading
+          submitBtn.disabled = true;
+          loading.style.display = "block";
+
+          // Get form data
+          const formData = new FormData(this);
+
+          // Add app info
+          formData.append("_subject", "Freelancer App - İletişim Formu");
+          formData.append("_replyto", formData.get("email"));
+
+          // Submit to Formspree
+          fetch(this.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+              Accept: "application/json",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                successMessage.style.display = "block";
+                this.reset();
+              } else {
+                throw new Error("Form submission failed");
+              }
+            })
+            .catch((error) => {
+              errorMessage.style.display = "block";
+            })
+            .finally(() => {
+              submitBtn.disabled = false;
+              loading.style.display = "none";
+            });
+        });
+
+      // Auto-resize textarea
+      document.getElementById("message").addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+      });
+    </script>
+  </body>
+</html>
